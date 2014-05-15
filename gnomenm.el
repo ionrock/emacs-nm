@@ -30,6 +30,11 @@
 (require 's)
 (require 'dash)
 
+
+(defun gnomenm/nmcli (cmd)
+  "Run a command and return the output as a chomp'd string"
+  (s-chomp (shell-command-to-string (concat "nmcli " cmd))))
+
 (defvar gnomenm/enabled nil
   "Whether gnomenm is enabled or not.")
 
@@ -55,21 +60,21 @@ Produces a list like:
 
 (defun gnomenm/enable ()
   "Turn on WIFI."
-  (shell-command-to-string "nmcli -t -f net-enabled nm wifi on")
+  (shell-command-to-string "nmcli -t -f WIFI nm wifi on")
   (message "gnomenm wifi enabled")
   (setq gnomenm/enabled t))
 
 (defun gnomenm/disable ()
   "Turn off WIFI."
-  (shell-command-to-string "nmcli -t -f net-enabled nm wifi off")
+  (shell-command-to-string "nmcli -t -f WIFI nm wifi off")
   (message "gnomenm wifi disabled")
   (setq gnomenm/enabled nil))
 
 (defun gnomenm-status ()
   "What's the network status?"
   (interactive)
-  (message "gnomenm network is %s"
-           (if gnomenm/enabled "on" "off")))
+  (let ((wifi-status (gnomenm/nmcli "-t -f WIFI nm wifi")))
+    (message "wifi %s" wifi-status)))
 
 ;;;###autoload
 (defun gnomenm-toggle-enabled (&optional status)
