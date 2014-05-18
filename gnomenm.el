@@ -134,6 +134,13 @@ Produces a list like:
 (defvar gnomenm-connect-history nil
   "The history of APs you've connected to.")
 
+
+(defun kva (key alist)
+  "Retrieve the value assigned to KEY in ALIST.
+
+This uses `assoc' as the lookup mechanism."
+  (cdr (assoc key alist)))
+
 ;;;###autoload
 (defun gnomenm-connect (ap)
   "Connect to a specific AP."
@@ -150,12 +157,12 @@ Produces a list like:
     (if (equal ap current-ap)
         (message "nm: already connected to %s" ap)
         ;; Else let's try and connect to it
-        (if (equal "802-11-wireless" (elt (kva ap (gnomenm/list)) 2))
-            (unwind-protect
-                 (gnomenm/disconnect current-ap)
-              (gnomenm/connect ap))
-            ;; Else just connect
-            (gnomenm/connect ap)))))
+      (if (equal "802-11-wireless" (elt (kva ap (gnomenm/list)) 2))
+	  (unwind-protect
+	      (gnomenm/disconnect current-ap)
+	    (gnomenm/connect ap))
+	;; Else just connect
+	(gnomenm/connect ap)))))
 
 ;;;###autoload
 (defun gnomenm-flip ()
