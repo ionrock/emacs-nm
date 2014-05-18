@@ -29,6 +29,7 @@
 
 (require 's)
 (require 'dash)
+(require 'kv)
 
 
 (defun gnomenm/nmcli (cmd)
@@ -133,13 +134,6 @@ Produces a list like:
 
 (defvar gnomenm-connect-history nil
   "The history of APs you've connected to.")
-
-
-(defun kva (key alist)
-  "Retrieve the value assigned to KEY in ALIST.
-
-This uses `assoc' as the lookup mechanism."
-  (cdr (assoc key alist)))
 
 ;;;###autoload
 (defun gnomenm-connect (ap)
