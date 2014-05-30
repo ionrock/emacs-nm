@@ -34,7 +34,7 @@
 
 (defun gnomenm/nmcli (cmd)
   "Run a command and return the output as a chomp'd string"
-  (s-chomp (shell-command-to-string (concat "nmcli " cmd))))
+  (s-chomp (shell-command-to-string cmd)))
 
 (defvar gnomenm/enabled nil
   "Whether gnomenm is enabled or not.")
@@ -74,7 +74,7 @@ Produces a list like:
 (defun gnomenm-status ()
   "What's the network status?"
   (interactive)
-  (let ((wifi-status (gnomenm/nmcli "-t -f WIFI nm wifi")))
+  (let ((wifi-status (gnomenm/nmcli "nmcli -t -f WIFI nm wifi")))
     (message "wifi %s" wifi-status)))
 
 ;;;###autoload
@@ -101,6 +101,14 @@ Produces a list like:
   (split-string
    (shell-command-to-string "nmcli -t -f name con list")
    "\n"))
+
+(defun gnomenm/list-available-networks ()
+  "List available wireless networks"
+  (split-string (gnomenm/nmcli "nmcli -t -f SSID device wifi"))
+
+(defun gnomenm/connect-to-wireless-network (ssid)
+  "Connect a wireless network by SSID"
+  (gnomenm/nmcli (concat "nmcli device wifi connect " ssid)))
 
 (defun gnomenm/disconnect (ap)
   "Disconnect from the specified AP."
