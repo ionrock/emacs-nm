@@ -33,7 +33,7 @@
 
 
 (defun gnomenm/nmcli (cmd)
-  "Run a command and return the output as a chomp'd string"
+  "Run CMD and return the output as a chomp'd string."
   (s-chomp (shell-command-to-string cmd)))
 
 (defvar gnomenm/enabled nil
@@ -103,11 +103,13 @@ Produces a list like:
    "\n"))
 
 (defun gnomenm/list-available-networks ()
-  "List available wireless networks"
-  (split-string (gnomenm/nmcli "nmcli -t -f SSID device wifi"))
+  "List available wireless networks."
+  (split-string
+   (gnomenm/nmcli "nmcli -t -f SSID device wifi")
+   "\n"))
 
 (defun gnomenm/connect-to-wireless-network (ssid)
-  "Connect a wireless network by SSID"
+  "Connect a wireless network by SSID."
   (gnomenm/nmcli (concat "nmcli device wifi connect " ssid)))
 
 (defun gnomenm/disconnect (ap)
@@ -117,7 +119,6 @@ Produces a list like:
     (shell-command-to-string
      (format "nmcli -t -f name con down id \"%s\"" ap))
     "\n")))
-
 
 (defvar gnomenm/connect-history '()
   "History of all you have connected to.")
