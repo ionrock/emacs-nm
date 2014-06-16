@@ -21,6 +21,34 @@
   (interactive)
   (nm/run (concat "nmcli device wifi connect " (tabulated-list-get-id))))
 
+
+(defun nm/filter-by-vpn (line)
+  (let ((entry (split-string line ":")))
+    (if (string-equal (nth 1 entry) "vpn")
+	(car entry))))
+
+(defun nm/vpns ()
+  (-map
+   (lambda (line)
+     (car (split-string line ":")))
+   (-filter 'nm/filter-by-vpn
+	    (split-string (nm/run "nmcli -t -f name,type c list") "\n"))))
+
+(defun nm/vpn-connected (ap)
+  (not (s-starts-with? "Error" (nm/run (format "nmcli c status id %s" ap)))))
+
+;;;###autoload
+(defun nm-vpn (ap)
+  "Connect to a configured VPN."
+  (interactive
+   (list
+    (let ((vpns (nm/vpns)))
+      (if (> (length vpns) 1)
+	  (completing-read "What VPN? " vpns nil t))
+      (car vpns))))
+  (if (not (nm/vpn-connected ap))
+      (gnomenm-connect ap)))
+
 (defvar nm-wifi-list-format
   [("SSID" 23 t)
    ("MODE" 20 t)
